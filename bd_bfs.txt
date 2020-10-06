@@ -1,0 +1,336 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int sx,sy,ex,ey,vis1[10][10],vis2[10][10],pred1[10][10],pred2[10][10],dist1[10][10],dist2[10][10];
+vector<int>path1;
+vector<int>path2;
+
+void display(int sx,int sy,int ex,int ey)
+{
+    int k=1;
+    for(int i=0;i<10000;i++)
+    {
+        for(int j=0;j<1000;j++)
+        {
+            
+        }
+    }
+    cout<<"\033[2J\033[5;0H";
+    for(int i=0;i<10;i++)
+    {
+        for(int j=0;j<10;j++)
+        {
+            if(vis1[i][j]==2)
+                cout<<"-  ";
+            else if(vis2[i][j]==2)
+                cout<<"-  ";
+            else if(i==sx && j==sy)
+                cout<<"S  ";
+            else if(i==ex && j==ey)
+                cout<<"E  ";
+            else if(vis1[i][j]==1)
+                cout<<"*  ";
+            else if(vis2[i][j]==1)
+                cout<<"*  ";
+            else if(vis1[i][j]==-1)
+                cout<<"@  ";
+            else
+            {
+                cout<<k<<" ";
+                if(i==0)
+                    cout<<" ";
+            }
+            k=k+1;
+        }
+        cout<<endl;
+    }
+}
+
+int check(int x,int y)
+{
+    if(x>=0 && x<10 && y>=0 && y<10)
+        return 1;
+    return 0;
+}
+
+int bi_bfs(int sx,int sy,int ex,int ey)
+{
+    queue<pair<int,int>>q1;
+    queue<pair<int,int>>q2;
+    for(int i=0;i<10;i++)
+    {
+        for(int j=0;j<10;j++)
+        {
+            dist1[i][j]=INT_MAX;
+            pred1[i][j]=-1;
+            dist2[i][j]=INT_MAX;
+            pred2[i][j]=-1;
+        }
+    }
+    dist1[sx][sy]=0;
+    dist2[sx][sy]=0;
+    vis1[sx][sy]=1;
+    vis2[ex][ey]=1;
+    pred1[sx][sy]=-1;
+    pred2[ex][ey]=-1;
+    q1.push({sx,sy});
+    q2.push({ex,ey});
+    while(!q1.empty() && !q2.empty())
+    {
+        pair<int,int>u1=q1.front();
+        pair<int,int>u2=q2.front();
+        q1.pop();
+        q2.pop();
+        if(check(u1.first-1,u1.second) && vis1[u1.first-1][u1.second]==0)
+        {
+            dist1[u1.first-1][u1.second]=dist1[u1.first][u1.second]+1;
+            pred1[u1.first-1][u1.second]=(u1.first*10)+(u1.second+1);
+            if(vis2[u1.first-1][u1.second]==1)
+            {
+                int s=((u1.first-1)*10)+(u1.second+1);
+                return s;
+            }
+            vis1[u1.first-1][u1.second]=1;
+            q1.push({u1.first-1,u1.second});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u2.first-1,u2.second) && vis2[u2.first-1][u2.second]==0)
+        {
+            dist2[u2.first-1][u2.second]=dist2[u2.first][u2.second]+1;
+            pred2[u2.first-1][u2.second]=(u2.first*10)+(u2.second+1);
+            if(vis1[u2.first-1][u2.second]==1)
+            {
+                int s=((u2.first-1)*10)+(u2.second+1);
+                return s;
+            }
+            vis2[u2.first-1][u2.second]=1;
+            q2.push({u2.first-1,u2.second});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u1.first,u1.second+1) && vis1[u1.first][u1.second+1]==0)
+        {
+            dist1[u1.first][u1.second+1]=dist1[u1.first][u1.second]+1;
+            pred1[u1.first][u1.second+1]=(u1.first*10)+(u1.second+1);
+            if(vis2[u1.first][u1.second+1]==1)
+            {
+                int s=(u1.first*10)+(u1.second+1+1);
+                return s;
+            }
+            vis1[u1.first][u1.second+1]=1;
+            q1.push({u1.first,u1.second+1});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u2.first,u2.second+1) && vis2[u2.first][u2.second+1]==0)
+        {
+            pred2[u2.first][u2.second+1]=(u2.first*10)+(u2.second+1);
+            dist2[u2.first][u2.second+1]=dist2[u2.first][u2.second]+1;
+            if(vis1[u2.first][u2.second+1]==1)
+            {
+                int s=(u2.first*10)+(u2.second+1+1);
+                return s;
+            }
+            vis2[u2.first][u2.second+1]=1;
+            q2.push({u2.first,u2.second+1});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u1.first+1,u1.second) && vis1[u1.first+1][u1.second]==0)
+        {
+            pred1[u1.first+1][u1.second]=(u1.first*10)+(u1.second+1);
+            dist1[u1.first+1][u1.second]=dist1[u1.first][u1.second]+1;
+            if(vis2[u1.first+1][u1.second]==1)
+            {
+                int s=((u1.first+1)*10)+(u1.second+1);
+                return s;
+            }
+            vis1[u1.first+1][u1.second]=1;
+            q1.push({u1.first+1,u1.second});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u2.first+1,u2.second) && vis2[u2.first+1][u2.second]==0)
+        {
+            dist2[u2.first+1][u2.second]=dist2[u2.first][u2.second]+1;
+            pred2[u2.first+1][u2.second]=(u2.first*10)+(u2.second+1);
+            if(vis1[u2.first+1][u2.second]==1)
+            {
+                int s=((u2.first+1)*10)+(u2.second+1);
+                return s;
+            }
+            vis2[u2.first+1][u2.second]=1;
+            q2.push({u2.first+1,u2.second});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u1.first,u1.second-1) && vis1[u1.first][u1.second-1]==0)
+        {
+            dist1[u1.first][u1.second-1]=dist1[u1.first][u1.second]+1;
+            pred1[u1.first][u1.second-1]=(u1.first*10)+(u1.second+1);
+            if(vis2[u1.first][u1.second-1]==1)
+            {
+                int s=(u1.first*10)+(u1.second-1+1);
+                return s;
+            }
+            vis1[u1.first][u1.second-1]=1;
+            q1.push({u1.first,u1.second-1});
+            display(sx,sy,ex,ey);
+        }
+        if(check(u2.first,u2.second-1) && vis2[u2.first][u2.second-1]==0)
+        {
+            dist2[u2.first][u2.second-1]=dist2[u2.first][u2.second]+1;
+            pred2[u2.first][u2.second-1]=(u2.first*10)+(u2.second+1);
+            if(vis1[u2.first][u2.second-1]==1)
+            {
+                int s=(u2.first*10)+(u2.second-1+1);
+                return s;
+            }
+            vis2[u2.first][u2.second-1]=1;
+            q2.push({u2.first,u2.second-1});
+            display(sx,sy,ex,ey);
+        }
+    }
+    return 0;
+}
+
+int main()
+{
+    int e,x,y,sp,ep,k=1,var,wall,w,q,dis,count=0;
+    char ch;
+    for(int i=0;i<10;i++)
+    {
+        for(int j=0;j<10;j++)
+        {
+            vis1[i][j]=0;
+            vis2[i][j]=0;
+        }
+    }
+    for(int i=0;i<10;i++)
+    {
+        for(int j=0;j<10;j++)
+        {
+            cout<<k<<" ";
+            if(i==0)
+                cout<<" ";
+            k++;
+        }
+        cout<<endl;
+    }
+    cout<<"Enter starting point and ending point on graph ";
+    cin>>sp>>ep;
+    sx=sp/10;
+    sy=(sp%10)-1;
+    if(sy<0)
+    {
+        sy=9;
+        sx=sx-1;
+    }
+    ex=ep/10;
+    ey=(ep%10)-1;
+    if(ey<0)
+    {
+        ey=9;
+        ex=ex-1;
+    }
+    memset(vis1,0,sizeof(vis1));
+    memset(vis2,0,sizeof(vis2));
+    cout<<"Do you want to add walls? Press y/n ";
+    cin>>ch;
+    if(ch=='y' || ch=='Y')
+    {
+        cout<<"Enter walls number (to stop press 'enter') ";
+        while(1)
+        {
+            cin>>wall;
+            x=wall/10;
+            y=(wall%10)-1;
+            if(y<0)
+            {
+                y=9;
+                x=x-1;
+            }
+            vis1[x][y]=-1;
+            vis2[x][y]=-1;
+            if(cin.get()=='\n')
+                break;
+        }
+    }
+    dis=bi_bfs(sx,sy,ex,ey);
+    if(!dis)
+        cout<<"Not found ";
+    else
+    {
+        x=dis/10;
+        y=(dis%10)-1;
+        if(y<0)
+        {
+            y=9;
+            x=x-1;
+        }
+        pair<int,int>last1;
+        pair<int,int>last2;
+        last1.first=x;
+        last1.second=y;
+        last2.first=x;
+        last2.second=y;
+        cout<<dist1[x][y]<<" "<<dist2[x][y]<<" ";
+        path1.push_back(dis);
+        while(pred1[last1.first][last1.second]!=-1)
+        {
+            path1.push_back(pred1[last1.first][last1.second]);
+            var=last1.first;
+            last1.first=(pred1[last1.first][last1.second]/10);
+            last1.second=(pred1[var][last1.second]%10)-1;
+            if(last1.second<0)
+            {
+                last1.second=9;
+                last1.first=last1.first-1;
+            }
+        }
+        while(pred2[last2.first][last2.second]!=-1)
+        {
+            path2.push_back(pred2[last2.first][last2.second]);
+            var=last2.first;
+            last2.first=(pred2[last2.first][last2.second]/10);
+            last2.second=(pred2[var][last2.second]%10)-1;
+            if(last2.second<0)
+            {
+                last2.second=9;
+                last2.first=last2.first-1;
+            }
+        }
+        for(int i=path1.size()-2;i>=0;i--)
+        {
+            count++;
+            q=path1[i]/10;
+            w=(path1[i]%10)-1;
+            if(w<0)
+            {
+                w=9;
+                q=q-1;
+            }
+            vis1[q][w]=2;
+            display(sx,sy,ex,ey);
+        }
+        for(int i=0;i<path2.size()-1;i++)
+        {
+            count++;
+            q=path2[i]/10;
+            w=(path2[i]%10)-1;
+            if(w<0)
+            {
+                w=9;
+                q=q-1;
+            }
+            vis2[q][w]=2;
+            display(sx,sy,ex,ey);
+        }
+        cout<<endl;
+        cout<<"Shortest path is: "<<count+1<<endl;
+        cout<<"Path is: ";
+        for(int i=path1.size()-2;i>=0;i--)
+            cout<<path1[i]<<" ";
+        for(int i=0;i<path2.size();i++)
+            cout<<path2[i]<<" ";
+    }
+    return 0;
+}
+
+
